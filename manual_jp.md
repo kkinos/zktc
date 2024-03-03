@@ -12,6 +12,8 @@ ZKTC は SystemVerilog で実装された 16 ビット CPU です。FPGA で動�
 
 # アドレス空間
 
+![](docs/memorymap.drawio.png)
+
 # レジスタ
 
 ZKTC の内蔵レジスタは、汎用レジスタとコントロールレジスタの２つに分類されます。

@@ -5,8 +5,9 @@ int main()
 {
 	init_tcb();
 	init_mem();
+	init_sem();
 
-	create_task(&sys_task(), sys_stack, SYS_STACK_SIZE);
+	zk_create_task(&sys_task(), sys_stack, SYS_STACK_SIZE);
 	cur_task = &tcb_tbl[0];
 
 	// system task start
@@ -18,9 +19,9 @@ int main()
 int sys_task()
 {
 	usermain();
+	zk_wait();
 
-	sleep_task();
-
+	// idle
 	while (1)
 	{
 	}

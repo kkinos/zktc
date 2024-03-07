@@ -30,7 +30,36 @@ int init_tcb()
 	return 0;
 }
 
-int create_task(func *func, char *stack, int stack_size)
+int schedule()
+{
+	int cnt = 0;
+
+	while (cnt <= (MAX_TASK_NUM - 1))
+	{
+		if ((cur_task_id + 1) == MAX_TASK_NUM)
+		{
+			cur_task_id = 1;
+		}
+		else
+		{
+			cur_task_id = cur_task_id + 1;
+		}
+		cur_task = &tcb_tbl[cur_task_id];
+		if (cur_task->status == READY)
+			return 0;
+		cnt = cnt + 1;
+	}
+
+	// sys task
+	cur_task_id = 0;
+	cur_task = &tcb_tbl[cur_task_id];
+
+	return 0;
+}
+
+// Task API
+
+int zk_create_task(func *func, char *stack, int stack_size)
 {
 	if (task_num + 1 >= MAX_TASK_NUM)
 	{
@@ -44,56 +73,41 @@ int create_task(func *func, char *stack, int stack_size)
 	tcb_tbl[task_num].status = READY;
 
 	tcb_tbl[task_num].sp = tcb_tbl[task_num].sp - 8;
-	*(tcb_tbl[task_num].sp) = &start_task();
+	*(tcb_tbl[task_num].sp) = &zk_start();
 	tcb_tbl[task_num].sp = tcb_tbl[task_num].sp - 1;
 
 	return task_num;
 }
 
-int schedule()
-{
-	while (1)
-	{
-		if ((cur_task_id + 1) == MAX_TASK_NUM)
-		{
-			cur_task_id = 0;
-		}
-		else
-		{
-			cur_task_id = cur_task_id + 1;
-		}
-		cur_task = &tcb_tbl[cur_task_id];
-
-		if (cur_task->status == READY)
-			break;
-	}
-	return 0;
-}
-
-int start_task()
+int zk_start()
 {
 	*(cur_task->func);
-	exit_task();
+	zk_exit();
 	return 0;
 }
 
-int exit_task()
+int zk_exit()
 {
 	cur_task->status = NO_TASK;
 	dispatch();
 	return 0;
 }
 
-int sleep_task()
+int zk_wait()
+{
+	dispatch();
+	return 0;
+}
+
+int zk_sleep()
 {
 	cur_task->status = SLEEP;
 	dispatch();
 	return 0;
 }
 
-int wakeup_task(int task_id)
+int zk_wakeup_task(int task_id)
 {
 	tcb_tbl[task_id].status = READY;
-	dispatch();
 	return 0;
 }

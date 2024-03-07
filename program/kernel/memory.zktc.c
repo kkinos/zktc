@@ -13,7 +13,7 @@ int init_mem()
 	return 0;
 }
 
-int malloc(int size)
+int zk_malloc(int size)
 {
 	char *p = free;
 	free = free + size;

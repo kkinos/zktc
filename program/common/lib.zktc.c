@@ -1,3 +1,5 @@
+#define NULL 0
+
 int memset(int *addr, int data, int len)
 {
 	char *p = addr;

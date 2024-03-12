@@ -16,13 +16,11 @@ typedef struct
 tcb tcb_tbl[MAX_TASK_NUM];
 
 int cur_task_id;
-int task_num;
 tcb *cur_task;
 
 int init_tcb()
 {
 	cur_task_id = 0;
-	task_num = -1;
 	for (int i = 0; i < MAX_TASK_NUM; i = i + 1)
 	{
 		tcb_tbl[i].status = NO_TASK;
@@ -32,22 +30,16 @@ int init_tcb()
 
 int schedule()
 {
-	int cnt = 0;
-
-	while (cnt <= (MAX_TASK_NUM - 1))
+	for (int i = 1; i <= MAX_TASK_NUM; i = i + 1)
 	{
-		if ((cur_task_id + 1) == MAX_TASK_NUM)
+		int task_id = (cur_task_id + i) % MAX_TASK_NUM;
+		tcb *task = &tcb_tbl[task_id];
+		if ((task->status == READY) && (task_id != 0))
 		{
-			cur_task_id = 1;
-		}
-		else
-		{
-			cur_task_id = cur_task_id + 1;
-		}
-		cur_task = &tcb_tbl[cur_task_id];
-		if (cur_task->status == READY)
+			cur_task_id = task_id;
+			cur_task = task;
 			return 0;
-		cnt = cnt + 1;
+		}
 	}
 
 	// sys task
@@ -61,22 +53,30 @@ int schedule()
 
 int zk_create_task(func *func, char *stack, int stack_size)
 {
-	if (task_num + 1 >= MAX_TASK_NUM)
+	tcb *task = NULL;
+	int i;
+	for (i = 0; i < MAX_TASK_NUM; i = i + 1)
+	{
+		if (tcb_tbl[i].status == NO_TASK)
+		{
+			task = &tcb_tbl[i];
+			break;
+		}
+	}
+	if (task == NULL)
 	{
 		return -1;
 	}
 
-	task_num = task_num + 1;
+	task->func = func;
+	task->sp = &stack[stack_size];
+	task->status = READY;
 
-	tcb_tbl[task_num].func = func;
-	tcb_tbl[task_num].sp = &stack[stack_size];
-	tcb_tbl[task_num].status = READY;
+	task->sp = task->sp - 8;
+	*(task->sp) = &zk_start();
+	task->sp = task->sp - 1;
 
-	tcb_tbl[task_num].sp = tcb_tbl[task_num].sp - 8;
-	*(tcb_tbl[task_num].sp) = &zk_start();
-	tcb_tbl[task_num].sp = tcb_tbl[task_num].sp - 1;
-
-	return task_num;
+	return i;
 }
 
 int zk_start()

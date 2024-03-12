@@ -13,6 +13,8 @@ int init_mem()
 	return 0;
 }
 
+// Memory API
+
 int zk_malloc(int size)
 {
 	char *p = free;

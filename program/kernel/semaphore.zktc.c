@@ -12,7 +12,7 @@ int sem_num;
 
 int init_sem()
 {
-	sem_num = -1;
+	sem_num = 0;
 	for (int i = 0; i < MAX_SEM_NUM; i = i + 1)
 	{
 		semcb_tbl[i].cnt = 1;
@@ -25,14 +25,14 @@ int init_sem()
 
 int zk_create_sem()
 {
-	if (sem_num + 1 >= MAX_SEM_NUM)
+	if (sem_num + 1 <= MAX_SEM_NUM)
 	{
-		return -1;
+		int sem_id = sem_num;
+		sem_num = sem_num + 1;
+		return sem_id;
 	}
 
-	sem_num = sem_num + 1;
-
-	return sem_num;
+	return -1;
 }
 
 int zk_get_sem(int sem_id)

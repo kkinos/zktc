@@ -19,7 +19,7 @@ int main()
 int sys_task()
 {
 	usermain();
-	zk_wait();
+	zk_switch();
 
 	// idle
 	while (1)

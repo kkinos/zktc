@@ -3,7 +3,7 @@
 typedef struct
 {
 	int cnt;
-	int wait_task;
+	queue wait_queue;
 } semcb;
 
 semcb semcb_tbl[MAX_SEM_NUM];
@@ -16,7 +16,7 @@ int init_sem()
 	for (int i = 0; i < MAX_SEM_NUM; i = i + 1)
 	{
 		semcb_tbl[i].cnt = 1;
-		semcb_tbl[i].wait_task = -1;
+		init_queue(&(semcb_tbl[i].wait_queue));
 	}
 	return 0;
 }
@@ -41,7 +41,7 @@ int zk_get_sem(int sem_id)
 
 	if (p->cnt == 0)
 	{
-		p->wait_task = cur_task_id;
+		enqueue(&(p->wait_queue), cur_task_id);
 		zk_sleep();
 	}
 
@@ -53,11 +53,11 @@ int zk_release_sem(int sem_id)
 {
 	semcb *p = &semcb_tbl[sem_id];
 	p->cnt = 1;
+	int wait = dequeue(&(p->wait_queue));
 
-	if (p->wait_task != -1)
+	if (wait != -1)
 	{
-		tcb_tbl[p->wait_task].status = READY;
-		p->wait_task = -1;
+		zk_wakeup(wait);
 	}
 
 	return 0;

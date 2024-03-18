@@ -5,12 +5,24 @@
 #define READY 1
 #define SLEEP 2
 
+// Message buffer
+typedef struct
+{
+	int sender_id;
+	int len;
+	int *data;
+} message;
+
 // Task control block
 typedef struct
 {
 	func *func;
 	int *sp;
 	int status;
+
+	message msg;
+	queue wait_queue;
+
 } tcb;
 
 tcb tcb_tbl[MAX_TASK_NUM];
@@ -24,6 +36,7 @@ int init_tcb()
 	for (int i = 0; i < MAX_TASK_NUM; i = i + 1)
 	{
 		tcb_tbl[i].status = NO_TASK;
+		init_queue(&(tcb_tbl[i].wait_queue));
 	}
 	return 0;
 }
@@ -79,6 +92,11 @@ int zk_create_task(func *func, char *stack, int stack_size)
 	return i;
 }
 
+int zk_get_id()
+{
+	return cur_task_id;
+}
+
 int zk_start()
 {
 	*(cur_task->func);
@@ -93,7 +111,7 @@ int zk_exit()
 	return 0;
 }
 
-int zk_wait()
+int zk_switch()
 {
 	dispatch();
 	return 0;
@@ -106,8 +124,40 @@ int zk_sleep()
 	return 0;
 }
 
-int zk_wakeup_task(int task_id)
+int zk_wakeup(int task_id)
 {
 	tcb_tbl[task_id].status = READY;
+	return 0;
+}
+
+// Message API
+
+int zk_send(int task_id, message *msg)
+{
+	tcb *task = &tcb_tbl[task_id];
+
+	if (task->status != SLEEP)
+	{
+		enqueue(&(task->wait_queue), cur_task_id);
+		zk_sleep();
+	}
+
+	msg->sender_id = cur_task_id;
+	memcpy(&(task->msg), msg, 6);
+	zk_wakeup(task_id);
+
+	return 0;
+}
+
+int zk_recv(message *msg)
+{
+	int wait = dequeue(&(cur_task->wait_queue));
+	if (wait != -1)
+	{
+		zk_wakeup(wait);
+	}
+	zk_sleep();
+
+	memcpy(msg, &(cur_task->msg), 6);
 	return 0;
 }

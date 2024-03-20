@@ -18,6 +18,7 @@ int init_mem()
 int zk_malloc(int size)
 {
 	char *p = free;
+	memset(p, 0, size);
 	free = free + size;
 	return p;
 }

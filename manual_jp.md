@@ -12,7 +12,7 @@ ZKTC は SystemVerilog で実装された 16 ビット CPU です。FPGA で動�
 
 # アドレス空間
 
-![](docs/memorymap.drawio.png)
+![](img/memorymap.drawio.png)
 
 # レジスタ
 
@@ -22,7 +22,7 @@ ZKTC の内蔵レジスタは、汎用レジスタとコントロールレジス
 
 16 ビットのレジスタが 8 本搭載されています。
 
-![](docs/gr.drawio.png)
+![](img/gr.drawio.png)
 
 | 名前 | 説明             |
 | ---- | ---------------- |
@@ -79,7 +79,7 @@ ZKTC には 5 つの命令フォーマットがあります。
 
 レジスタ同士の演算を行う命令です。
 
-![](docs/r.drawio.png)
+![](img/r.drawio.png)
 
 | Opcode | Function | Instruction            | Mnemonic | Operation                          | Assembly   |
 | ------ | -------- | ---------------------- | -------- | ---------------------------------- | ---------- |
@@ -97,7 +97,7 @@ ZKTC には 5 つの命令フォーマットがあります。
 
 命令の中に即値(Immediate)を 5 ビット取る命令です。
 
-![](docs/i5.drawio.png)
+![](img/i5.drawio.png)
 
 | Opcode | Instruction                     | Mnemonic | Operation                                      | Assembly         |
 | ------ | ------------------------------- | -------- | ---------------------------------------------- | ---------------- |
@@ -120,7 +120,7 @@ ZKTC には 5 つの命令フォーマットがあります。
 
 命令の中に即値(Immediate)を 8 ビット取る命令です。
 
-![](docs/i8.drawio.png)
+![](img/i8.drawio.png)
 
 | Opcode | Instruction               | Mnemonic | Operation                       | Assembly    |
 | ------ | ------------------------- | -------- | ------------------------------- | ----------- |
@@ -132,7 +132,7 @@ ZKTC には 5 つの命令フォーマットがあります。
 
 オペランドを取りコントロールレジスタを操作する命令です。
 
-![](docs/c1.drawio.png)
+![](img/c1.drawio.png)
 
 | Opcode | Function | Instruction | Mnemonic | Operation              | Assembly |
 | ------ | -------- | ----------- | -------- | ---------------------- | -------- |
@@ -156,7 +156,7 @@ ZKTC には 5 つの命令フォーマットがあります。
 
 コントロールレジスタを操作する命令です。
 
-![](docs/c2.drawio.png)
+![](img/c2.drawio.png)
 
 | Opcode | Function | Instruction                         | Mnemonic | Operation            | Assembly |
 | ------ | -------- | ----------------------------------- | -------- | -------------------- | -------- |

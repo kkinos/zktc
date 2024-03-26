@@ -115,5 +115,60 @@ int strncmp(char *s1, char *s2, int len)
 	return 0;
 }
 
+char *_strtok_p;
+
+int strtok(char *str, char *delim)
+{
+	if (str != 0)
+	{
+		_strtok_p = str;
+	}
+
+	char *ret = _strtok_p;
+	while (*_strtok_p != 0)
+	{
+		if (*_strtok_p == *delim)
+		{
+			*_strtok_p = 0;
+			_strtok_p = _strtok_p + 1;
+			return ret;
+		}
+		_strtok_p = _strtok_p + 1;
+	}
+
+	if (_strtok_p == ret)
+	{
+		return 0;
+	}
+
+	return ret;
+}
+
+int hex2int(char *s)
+{
+	int n = 0;
+	while (*s)
+	{
+		if (*s >= "0"[0] && *s <= "9"[0])
+		{
+			n = (n << 4) + (*s - "0"[0]);
+		}
+		else if (*s >= "a"[0] && *s <= "f"[0])
+		{
+			n = (n << 4) + ((*s - "a"[0]) + 10);
+		}
+		else if (*s >= "A"[0] && *s <= "F"[0])
+		{
+			n = (n << 4) + ((*s - "A"[0]) + 10);
+		}
+		else
+		{
+			break;
+		}
+		s = s + 1;
+	}
+	return n;
+}
+
 // int2string
 // string2int

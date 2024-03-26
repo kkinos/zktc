@@ -1,0 +1,4 @@
+*.vcd
+*.mem
+*_tb
+*.bin

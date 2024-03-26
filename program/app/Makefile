@@ -1,24 +1,11 @@
-COMMON:=../common/lib.zktc.c
-KERNEL:=../kernel/queue.zktc.c ../kernel/task.zktc.c ../kernel/interrupt_handler.zktc.c ../kernel/init.zktc.c \
-../kernel/dispatch.zktc.c ../kernel/memory.zktc.c ../kernel/semaphore.zktc.c ../kernel/kernel.zktc.c
-APP:=usermain.zktc.c
-SRCS:=$(COMMON) $(KERNEL) $(APP)
-
-ASM:=app.asm
-TARGET:=app.mem
-
+SAMPLEDIRS:=sample/led sample/gpio sample/mandelbrot
 
 .PHONY: all
-all: $(TARGET)
+all: $(SAMPLEDIRS)
 
-$(TARGET): $(ASM)
-	zktc-asm $(ASM) -o $(TARGET) 
-	
-$(ASM): $(SRCS)
-	zktc-c-com $(SRCS) -o $(ASM)
+$(SAMPLEDIRS):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-.PHONY: clean
-clean:
-	rm -rf *.asm
-	rm -rf *.mem
+.PHONY: clean $(SAMPLEDIRS)
+clean: $(SAMPLEDIRS)
 

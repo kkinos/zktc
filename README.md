@@ -10,9 +10,9 @@ ZKTC project is a hobby project to design a CPU, create a compiler for it, creat
 
 16-bit CPU implemented in SystemVerilog.
 
-### Manual
+### Reference Manual
 
-[Japanese](manual_jp.md)
+[Japanese](reference_manual_jp.md)
 
 [English]()
 

@@ -107,6 +107,7 @@ module tb_mem;
 
 
   initial begin
+    $dumpfile("tb_mem.vcd");
     $dumpvars(0, tb_mem);
   end
 

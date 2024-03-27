@@ -1,3 +1,5 @@
+`default_nettype none
+
 module zktc (
     input logic clk,
     input logic rst,

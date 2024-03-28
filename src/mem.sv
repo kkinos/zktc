@@ -66,4 +66,9 @@ module mem #(
     ram2[0] = 8'hdc;
   end
 
+  initial begin
+    ram1[1] = 8'hfe;
+    ram2[1] = 8'hba;
+  end
+
 endmodule

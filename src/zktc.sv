@@ -40,7 +40,7 @@ module zktc (
     end else begin
       case (cpu_state)
         S_FETCH: begin
-          next_pc   <= pc + 4;
+          next_pc   <= pc + 2;
           mem_valid <= 1;
           if (mem_ready) begin
             mem_valid <= 0;

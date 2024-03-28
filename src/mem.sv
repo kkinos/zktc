@@ -4,6 +4,7 @@ module mem #(
     parameter MEM_SIZE = 16'h5000
 ) (
     input logic clk,
+    input logic rst,
 
     input logic [1:0] wstrb,
     input logic vaild,
@@ -38,10 +39,10 @@ module mem #(
 
 
   always_ff @(posedge clk) begin
-    if (vaild) begin
-      ready <= 1;
-    end else if (ready) begin
+    if (rst || ready) begin
       ready <= 0;
+    end else if (vaild) begin
+      ready <= 1;
     end
   end
 
@@ -58,6 +59,11 @@ module mem #(
       ram2[raddr2] <= din2;
     end
     dout2 <= ram2[raddr2];
+  end
+
+  initial begin
+    ram1[0] = 8'hba;
+    ram2[0] = 8'hdc;
   end
 
 endmodule

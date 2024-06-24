@@ -23,14 +23,15 @@ module core (
   logic [15:0] inst;
 
   // CPU State
-  logic [ 7:0] cpu_state;
-
-  localparam S_FETCH = 8'b0000_0001;
-  localparam S_DECODE = 8'b0000_0010;
-  localparam S_EXECUTE = 8'b0000_0100;
-  localparam S_MEMORY = 8'b0000_1000;
-  localparam S_WRITEBACK = 8'b0001_0000;
-  localparam S_TRAP = 8'b0010_0000;
+  typedef enum {
+    FETCH,
+    DECODE,
+    EXECUTE,
+    MEMORY,
+    WRITEBACK,
+    TRAP
+  } cpu_state_t;
+  cpu_state_t cpu_state;
 
   logic fetch_enable;
   logic decode_enable;
@@ -41,7 +42,7 @@ module core (
 
   always_ff @(posedge clk) begin
     if (rst) begin
-      cpu_state <= S_FETCH;
+      cpu_state <= FETCH;
 
       fetch_enable <= 1;
       decode_enable <= 0;
@@ -55,7 +56,7 @@ module core (
       mem_wdata <= 0;
     end else begin
       case (cpu_state)
-        S_FETCH: begin
+        FETCH: begin
           if (!mem_ready) begin
             pc_de_in  <= pc;
             mem_valid <= 1;
@@ -64,25 +65,25 @@ module core (
             inst_de_in <= mem_rdata;
             fetch_enable <= 0;
             decode_enable <= 1;
-            cpu_state <= S_DECODE;
+            cpu_state <= DECODE;
           end
         end
-        S_DECODE: begin
+        DECODE: begin
           decode_enable <= 0;
           if (!psr[0] && trap_de_out) begin
             trap_enable <= 1;
-            cpu_state   <= S_TRAP;
+            cpu_state   <= TRAP;
           end else begin
             execute_enable <= 1;
-            cpu_state <= S_EXECUTE;
+            cpu_state <= EXECUTE;
           end
         end
-        S_EXECUTE: begin
+        EXECUTE: begin
           execute_enable <= 0;
           memory_enable <= 1;
-          cpu_state <= S_MEMORY;
+          cpu_state <= MEMORY;
         end
-        S_MEMORY: begin
+        MEMORY: begin
           if (memory_enable) begin
             if (d_inst_mem_in == `INST_LW || d_inst_mem_in == `INST_LH || d_inst_mem_in ==
                 `INST_LHU
@@ -93,7 +94,7 @@ module core (
                 mem_valid <= 0;
                 memory_enable <= 0;
                 writeback_enable <= 1;
-                cpu_state <= S_WRITEBACK;
+                cpu_state <= WRITEBACK;
                 if (d_inst_mem_in == `INST_LW || d_inst_mem_in == `INST_POP) begin
                   mem_rdata_wb_in <= mem_rdata;
                 end else if (d_inst_mem_in == `INST_LH) begin
@@ -120,24 +121,24 @@ module core (
                 mem_wdata <= 0;
                 memory_enable <= 0;
                 writeback_enable <= 1;
-                cpu_state <= S_WRITEBACK;
+                cpu_state <= WRITEBACK;
               end
             end else begin
               memory_enable <= 0;
               writeback_enable <= 1;
-              cpu_state <= S_WRITEBACK;
+              cpu_state <= WRITEBACK;
             end
           end
         end
-        S_WRITEBACK: begin
-          cpu_state <= S_FETCH;
+        WRITEBACK: begin
+          cpu_state <= FETCH;
           writeback_enable <= 0;
           fetch_enable <= 1;
         end
-        S_TRAP: begin
+        TRAP: begin
           trap_enable <= 0;
           fetch_enable <= 1;
-          cpu_state <= S_FETCH;
+          cpu_state <= FETCH;
         end
       endcase
     end

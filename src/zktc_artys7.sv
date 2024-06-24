@@ -46,9 +46,13 @@ module zktc_artys7 (
   logic led_wstrb;
   logic [3:0] led_data;
 
+  // UART
+  logic uart_sel;
+
   assign rom_sel   = mem_addr >= 16'hB000;
   assign ram_sel   = (mem_addr >= 16'h0000) && (mem_addr < 16'h5000);
   assign led_sel   = mem_addr == 16'h8000;
+  assign uart_sel  = (mem_addr == 16'h8100);
 
   assign rom_valid = rom_sel ? mem_valid : 0;
   assign rom_wstrb = rom_sel ? mem_wstrb : 2'b0;

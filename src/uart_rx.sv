@@ -66,8 +66,10 @@ module uart_rx #(
             if (bitcnt == 9) begin
               if (rx_buf[8]) begin
                 rx_data <= rx_buf[7:0];
-                valid <= 1;
-                irq <= ien && ack;
+                valid   <= 1;
+                if (ien) begin
+                  irq <= 1;
+                end
               end
               bitcnt <= 0;
               state  <= IDLE;
@@ -78,6 +80,10 @@ module uart_rx #(
     end
   end
 
-
+  always_ff @(posedge clk) begin
+    if (ack) begin
+      irq <= 0;
+    end
+  end
 
 endmodule

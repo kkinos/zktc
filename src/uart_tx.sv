@@ -41,12 +41,11 @@ module uart_tx #(
             waitcnt <= waitcnt + 1;
           end else begin
             waitcnt <= 0;
+            bitcnt  <= bitcnt + 1;
+            tx_buf  <= {1'b1, tx_buf[9:1]};
             if (bitcnt == 9) begin
               bitcnt <= 0;
               state  <= IDLE;
-            end else begin
-              bitcnt <= bitcnt + 1;
-              tx_buf <= {1'b1, tx_buf[9:1]};
             end
           end
         end

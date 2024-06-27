@@ -56,17 +56,18 @@ module uart_tb ();
     rst = 0;
   end
 
-  task trigger();
+  initial begin
+    ien = 1;
+  end
+
+  initial begin
+    #100;
     #10;
     en = 1;
     #10;
     en = 0;
-  endtask
 
-  initial begin
-    #100;
-    trigger();
-    #200000;
+    #100000;
     if (tx_data == rx_data) begin
       $display("\x1b[32m");
       $display("=== UART test passed ===");

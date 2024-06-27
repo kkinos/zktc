@@ -36,14 +36,15 @@ module uart_rx #(
       rx_buf <= 0;
       start_edge <= 4'b1111;
       valid <= 0;
+      irq <= 0;
     end else begin
       case (state)
         IDLE: begin
           start_edge <= {start_edge[2:0], rx};
-          valid <= 0;
           if (start_edge == 4'b1000) begin
             state   <= WAIT;
             waitcnt <= 0;
+            valid   <= 0;
           end
         end
         WAIT: begin

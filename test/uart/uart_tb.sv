@@ -66,13 +66,13 @@ module uart_tb ();
   initial begin
     #100;
     trigger();
-    #1000;
+    #200000;
     if (tx_data == rx_data) begin
       $display("\x1b[32m");
       $display("=== UART test passed ===");
       $display("\x1b[0m");
     end else begin
-      $display("\x1b[32m");
+      $display("\x1b[31m");
       $display("=== UART test failed ===");
       $display("\x1b[0m");
     end

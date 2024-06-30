@@ -2,10 +2,10 @@ module zktc_artys7 (
     input logic clk,
     input logic rstn,
 
-    input logic txd,
+    input logic rxd,
 
     output logic [3:0] led,
-    output logic rxd
+    output logic txd
 );
 
   logic rst;
@@ -21,14 +21,14 @@ module zktc_artys7 (
   logic [15:0] mem_rdata;
   logic [15:0] mem_wdata;
 
-  // ROM
-  logic rom_sel;
-  logic rom_ready;
-  logic rom_valid;
-  logic [1:0] rom_wstrb;
-  logic [15:0] rom_addr;
-  logic [15:0] rom_rdata;
-  logic [15:0] rom_wdata;
+  // BOOT
+  logic boot_sel;
+  logic boot_ready;
+  logic boot_valid;
+  logic [1:0] boot_wstrb;
+  logic [15:0] boot_addr;
+  logic [15:0] boot_rdata;
+  logic [15:0] boot_wdata;
 
   // RAM
   logic ram_sel;
@@ -48,41 +48,41 @@ module zktc_artys7 (
 
   // UART
   logic uart_sel;
+  logic uart_ready;
+  logic uart_valid;
+  logic uart_wstrb;
+  logic [7:0] uart_addr;
+  logic [15:0] uart_rdata;
+  logic [15:0] uart_wdata;
 
-  assign rom_sel   = mem_addr >= 16'hB000;
-  assign ram_sel   = (mem_addr >= 16'h0000) && (mem_addr < 16'h5000);
-  assign led_sel   = mem_addr == 16'h8000;
-  assign uart_sel  = (mem_addr == 16'h8100);
+  logic uart_rx_irq;
 
-  assign rom_valid = rom_sel ? mem_valid : 0;
-  assign rom_wstrb = rom_sel ? mem_wstrb : 2'b0;
-  assign rom_addr  = rom_sel ? mem_addr - 16'hB000 : 16'h0;
-  assign rom_wdata = rom_sel ? mem_wdata : 16'h0;
+  assign boot_sel = mem_addr >= 16'hB000;
+  assign ram_sel = (mem_addr >= 16'h0000) && (mem_addr < 16'h5000);
+  assign led_sel = mem_addr == 16'h8000;
+  assign uart_sel = (mem_addr >= 16'h8100) && (mem_addr < 16'h8200);
+
+  assign boot_valid = boot_sel ? mem_valid : 0;
+  assign boot_wstrb = boot_sel ? mem_wstrb : 2'b0;
+  assign boot_addr = boot_sel ? mem_addr - 16'hB000 : 16'h0;
+  assign boot_wdata = boot_sel ? mem_wdata : 16'h0;
 
   assign ram_valid = ram_sel ? mem_valid : 0;
   assign ram_wstrb = ram_sel ? mem_wstrb : 2'b0;
-  assign ram_addr  = ram_sel ? mem_addr : 16'h0;
+  assign ram_addr = ram_sel ? mem_addr : 16'h0;
   assign ram_wdata = ram_sel ? mem_wdata : 16'h0;
 
-  assign mem_rdata = rom_sel ? rom_rdata : ram_sel ? ram_rdata : 16'h0;
-
-
   assign led_valid = led_sel ? mem_valid : 0;
-  assign led_wstrb = led_sel ? mem_wstrb : 2'b0;
-  assign led_data  = led_sel ? mem_wdata[3:0] : 4'b0;
+  assign led_wstrb = led_sel ? mem_wstrb[0] : 2'b0;
+  assign led_data = led_sel ? mem_wdata[3:0] : 4'b0;
 
+  assign uart_valid = uart_sel ? mem_valid : 0;
+  assign uart_wstrb = uart_sel ? mem_wstrb[0] : 2'b0;
+  assign uart_addr = uart_sel ? mem_addr[7:0] : 8'h0;
+  assign uart_wdata = uart_sel ? mem_wdata : 16'h0;
 
-  always_comb begin
-    if (rom_sel) begin
-      mem_ready = rom_ready;
-    end else if (ram_sel) begin
-      mem_ready = ram_ready;
-    end else if (led_sel) begin
-      mem_ready = led_ready;
-    end else begin
-      mem_ready = 0;
-    end
-  end
+  assign mem_rdata = boot_sel ? boot_rdata : ram_sel ? ram_rdata : uart_sel ? uart_rdata : 16'h0;
+  assign mem_ready = boot_sel ? boot_ready : ram_sel ? ram_ready : led_sel ? led_ready : uart_sel ? uart_ready : 1'b0;
 
   core core (
       .clk(clk),
@@ -106,13 +106,13 @@ module zktc_artys7 (
       .clk(clk),
       .rst(rst),
 
-      .wstrb(rom_wstrb),
-      .valid(rom_valid),
-      .addr (rom_addr),
-      .rdata(rom_rdata),
+      .wstrb(boot_wstrb),
+      .valid(boot_valid),
+      .addr (boot_addr),
+      .rdata(boot_rdata),
 
-      .ready(rom_ready),
-      .wdata(rom_wdata)
+      .ready(boot_ready),
+      .wdata(boot_wdata)
   );
 
   ram #(
@@ -128,6 +128,27 @@ module zktc_artys7 (
 
       .ready(ram_ready),
       .wdata(ram_wdata)
+  );
+
+  uart #(
+      .WAIT_COUNT(868)
+  ) uart (
+      .clk(clk),
+      .rst(rst),
+
+      .uart_valid(uart_valid),
+      .uart_wstrb(uart_wstrb),
+      .uart_addr (uart_addr),
+      .uart_wdata(uart_wdata),
+
+      .rxd(rxd),
+      .uart_rx_ack(uart_rx_ack),
+
+      .uart_ready(uart_ready),
+      .uart_rdata(uart_rdata),
+
+      .txd(txd),
+      .uart_rx_irq(uart_rx_irq)
   );
 
   always_ff @(posedge clk) begin

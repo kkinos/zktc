@@ -18,15 +18,15 @@ module led_tb;
   end
 
   initial begin
-    txd = 0;
+    rxd = 0;
   end
 
   zktc_artys7 zktc_artys7 (
       .clk (clk),
       .rstn(rstn),
-      .txd (txd),
+      .rxd (rxd),
       .led (led),
-      .rxd (rxd)
+      .txd (txd)
   );
 
   always @(negedge clk) begin

@@ -2,7 +2,8 @@ SRC_DIR:=../../../src
 INCS:=$(SRC_DIR)/include/def.sv
 SRCS:=$(SRC_DIR)/zktc_artys7.sv $(SRC_DIR)/core.sv $(SRC_DIR)/decode.sv \
 	$(SRC_DIR)/execute.sv $(SRC_DIR)/registers.sv $(SRC_DIR)/c_registers.sv \
-	$(SRC_DIR)/boot.sv $(SRC_DIR)/ram.sv
+	$(SRC_DIR)/boot.sv $(SRC_DIR)/ram.sv $(SRC_DIR)/uart.sv $(SRC_DIR)/uart_tx.sv \
+	$(SRC_DIR)/uart_rx.sv
 
 PROG_DIR:=../../../program
 COMMON:=$(PROG_DIR)/common/lib.zktc.c

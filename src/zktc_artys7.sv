@@ -130,6 +130,22 @@ module zktc_artys7 (
       .wdata(ram_wdata)
   );
 
+  always_ff @(posedge clk) begin
+    if (rst) begin
+      led <= 0;
+    end else if (led_ready && led_wstrb) begin
+      led <= led_data;
+    end
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst || led_ready) begin
+      led_ready <= 0;
+    end else if (led_valid) begin
+      led_ready <= 1;
+    end
+  end
+
   uart #(
       .WAIT_COUNT(868)
   ) uart (
@@ -150,22 +166,5 @@ module zktc_artys7 (
       .txd(txd),
       .uart_rx_irq(uart_rx_irq)
   );
-
-  always_ff @(posedge clk) begin
-    if (rst) begin
-      led <= 0;
-    end else if (led_ready && led_wstrb) begin
-      led <= led_data;
-    end
-  end
-
-  always_ff @(posedge clk) begin
-    if (rst || led_ready) begin
-      led_ready <= 0;
-    end else if (led_valid) begin
-      led_ready <= 1;
-    end
-  end
-
 
 endmodule

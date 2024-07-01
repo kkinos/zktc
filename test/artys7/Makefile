@@ -1,4 +1,4 @@
-TESTDIRS:=led soft_trap app
+TESTDIRS:=led soft_trap app uart
 
 .PHONY: all
 all: $(TESTDIRS)

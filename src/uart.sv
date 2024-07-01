@@ -36,6 +36,14 @@ module uart #(
   logic [7:0] uart_rx_data;
 
   always_ff @(posedge clk) begin
+    if (rst || uart_ready) begin
+      uart_ready <= 0;
+    end else if (uart_valid) begin
+      uart_ready <= 1;
+    end
+  end
+
+  always_ff @(posedge clk) begin
     if (rst) begin
       uart_tx_status <= 8'b0;
       uart_rx_status <= 8'b0;
@@ -47,9 +55,34 @@ module uart #(
     end
   end
 
-  assign uart_tx_en = uart_tx_enable[0];
-  assign uart_rx_ir_enable = uart_rx_ien;
 
+  always_comb begin
+    case (uart_addr)
+      8'h00:   uart_rdata = uart_tx_status;
+      8'h10:   uart_rdata = uart_rx_status;
+      8'h14:   uart_rdata = uart_rx_data_valid;
+      8'h16:   uart_rdata = uart_rx_data;
+      default: uart_rdata = 16'h0;
+    endcase
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst) begin
+      uart_tx_enable <= 8'b0;
+      uart_tx_data <= 8'b0;
+      uart_rx_ir_enable <= 8'b0;
+    end else if (uart_wstrb) begin
+      case (uart_addr)
+        8'h02:   uart_tx_enable <= uart_wdata[7:0];
+        8'h04:   uart_tx_data <= uart_wdata[7:0];
+        8'h14:   uart_rx_ir_enable <= uart_wdata[7:0];
+        default: ;
+      endcase
+    end
+  end
+
+  assign uart_tx_en  = uart_tx_enable[0];
+  assign uart_rx_ien = uart_rx_ir_enable[0];
 
   uart_tx #(
       .WAIT_COUNT(WAIT_COUNT)
@@ -77,5 +110,4 @@ module uart #(
       .valid(uart_rx_valid),
       .irq(uart_rx_irq)
   );
-
 endmodule

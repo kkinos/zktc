@@ -12,7 +12,7 @@ ZKTC project is a hobby project to design a CPU, create a compiler for it, creat
 
 ### Reference Manual
 
-[Japanese](reference_manual_jp.md)
+[Japanese](docs/reference_manual_jp.md)
 
 [English]()
 

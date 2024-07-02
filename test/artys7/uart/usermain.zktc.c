@@ -31,7 +31,7 @@ int usermain()
 
 int task1()
 {
-  int data = 5;
+  int data = 0x55;
   *tx_data = data;
   *tx_start = 1;
 

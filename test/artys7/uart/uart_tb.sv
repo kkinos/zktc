@@ -5,6 +5,8 @@ module uart_tb;
   logic [3:0] led;
   logic rxd;
 
+  assign rxd = txd;
+
   initial begin
     clk = 0;
     forever #5 clk = ~clk;
@@ -15,10 +17,6 @@ module uart_tb;
     rstn = 0;
     #10;
     rstn = 1;
-  end
-
-  initial begin
-    rxd = 0;
   end
 
   zktc_artys7 zktc_artys7 (

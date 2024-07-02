@@ -19,21 +19,21 @@ module uart #(
     output logic uart_rx_irq
 );
 
-  logic uart_tx_en;
-  logic uart_tx_busy;
+  logic tx_en;
+  logic tx_busy;
 
-  logic uart_rx_ien;
-  logic uart_rx_valid;
-  logic uart_rx_busy;
+  logic rx_ien;
+  logic rx_valid;
+  logic rx_busy;
 
-  logic [7:0] uart_tx_status;
-  logic [7:0] uart_tx_enable;
-  logic [7:0] uart_tx_data;
+  logic [7:0] tx_status_reg;
+  logic [7:0] tx_en_reg;
+  logic [7:0] tx_data;
 
-  logic [7:0] uart_rx_status;
-  logic [7:0] uart_rx_ir_enable;
-  logic [7:0] uart_rx_data_valid;
-  logic [7:0] uart_rx_data;
+  logic [7:0] rx_status_reg;
+  logic [7:0] rx_ir_en_reg;
+  logic [7:0] rx_valid_reg;
+  logic [7:0] rx_data;
 
   always_ff @(posedge clk) begin
     if (rst || uart_ready) begin
@@ -45,54 +45,54 @@ module uart #(
 
   always_ff @(posedge clk) begin
     if (rst) begin
-      uart_tx_status <= 8'b0;
-      uart_rx_status <= 8'b0;
-      uart_rx_data_valid <= 8'b0;
+      tx_status_reg <= 8'b0;
+      rx_status_reg <= 8'b0;
+      rx_valid_reg  <= 8'b0;
     end else begin
-      uart_tx_status <= {7'b0, uart_tx_busy};
-      uart_rx_status <= {7'b0, uart_rx_busy};
-      uart_rx_data_valid <= {7'b0, uart_rx_valid};
+      tx_status_reg <= {7'b0, tx_busy};
+      rx_status_reg <= {7'b0, rx_busy};
+      rx_valid_reg  <= {7'b0, rx_valid};
     end
   end
 
 
   always_comb begin
     case (uart_addr)
-      8'h00:   uart_rdata = uart_tx_status;
-      8'h10:   uart_rdata = uart_rx_status;
-      8'h14:   uart_rdata = uart_rx_data_valid;
-      8'h16:   uart_rdata = uart_rx_data;
+      8'h00:   uart_rdata = tx_status_reg;
+      8'h10:   uart_rdata = rx_status_reg;
+      8'h14:   uart_rdata = rx_valid_reg;
+      8'h16:   uart_rdata = rx_data;
       default: uart_rdata = 16'h0;
     endcase
   end
 
   always_ff @(posedge clk) begin
     if (rst) begin
-      uart_tx_enable <= 8'b0;
-      uart_tx_data <= 8'b0;
-      uart_rx_ir_enable <= 8'b0;
+      tx_en_reg <= 8'b0;
+      tx_data <= 8'b0;
+      rx_ir_en_reg <= 8'b0;
     end else if (uart_wstrb) begin
       case (uart_addr)
-        8'h02:   uart_tx_enable <= uart_wdata[7:0];
-        8'h04:   uart_tx_data <= uart_wdata[7:0];
-        8'h14:   uart_rx_ir_enable <= uart_wdata[7:0];
+        8'h02:   tx_en_reg <= uart_wdata[7:0];
+        8'h04:   tx_data <= uart_wdata[7:0];
+        8'h14:   rx_ir_en_reg <= uart_wdata[7:0];
         default: ;
       endcase
     end
   end
 
-  assign uart_tx_en  = uart_tx_enable[0];
-  assign uart_rx_ien = uart_rx_ir_enable[0];
+  assign tx_en  = tx_en_reg[0];
+  assign rx_ien = rx_ir_en_reg[0];
 
   uart_tx #(
       .WAIT_COUNT(WAIT_COUNT)
   ) uart_tx (
       .clk(clk),
       .rst(rst),
-      .en(uart_tx_en),
-      .tx_data(uart_tx_data),
+      .en(tx_en),
+      .tx_data(tx_data),
 
-      .busy(uart_tx_busy),
+      .busy(tx_busy),
       .tx  (txd)
   );
 
@@ -102,12 +102,12 @@ module uart #(
       .clk(clk),
       .rst(rst),
       .rx (rxd),
-      .ien(uart_rx_ien),
+      .ien(rx_ien),
       .ack(uart_rx_ack),
 
-      .rx_data(uart_rx_data),
-      .busy(uart_rx_busy),
-      .valid(uart_rx_valid),
+      .rx_data(rx_data),
+      .busy(rx_busy),
+      .valid(rx_valid),
       .irq(uart_rx_irq)
   );
 endmodule

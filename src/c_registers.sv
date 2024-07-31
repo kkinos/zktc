@@ -14,10 +14,14 @@ module c_registers (
     input logic [15:0] wdata,
 
     input logic pc_wen,
-    input logic [15:0] next_pc
+    input logic [15:0] next_pc,
+
+    input logic tr_wen,
+    input logic tr_ren
 );
 
   logic [15:0] pc, sp, psr, tlr, thr, ppc, ppsr;
+  logic [31:0] tr;
 
   localparam PC_INIT = 16'hB000;
   localparam PC_TRAP = 16'h0000;
@@ -70,12 +74,25 @@ module c_registers (
     end
   end
 
+  // TR
+  always_ff @(posedge clk) begin
+    if (rst) begin
+      tr <= 32'h00000000;
+    end else if (tr_wen) begin
+      tr <= {thr, tlr};
+    end else begin
+      tr <= tr + 1;
+    end
+  end
+
   // TLR
   always_ff @(posedge clk) begin
     if (rst) begin
       tlr <= 16'h0000;
     end else if (wen && waddr == 3'b011) begin
       tlr <= wdata;
+    end else if (tr_ren) begin
+      tlr <= tr[15:0];
     end
   end
 
@@ -85,6 +102,8 @@ module c_registers (
       thr <= 16'h0000;
     end else if (wen && waddr == 3'b100) begin
       thr <= wdata;
+    end else if (tr_ren) begin
+      thr <= tr[31:16];
     end
   end
 

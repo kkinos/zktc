@@ -10,6 +10,8 @@ int main()
 	char cmd_buf[16];
 	char *load_buf = 0;
 	int load_size = 0;
+	int thr = 0;
+	int tlr = 0;
 
 	while (1)
 	{
@@ -98,6 +100,16 @@ int main()
 				puts("No program loaded.\n");
 			}
 		}
+		else if (!strcmp(cmd_buf, "timer"))
+		{
+			__asm__("rtr");
+			thr = read_thr();
+			tlr = read_tlr();
+			puts("Timer: 0x");
+			putxval(thr, 4);
+			putxval(tlr, 4);
+			puts("\n");
+		}
 		else
 		{
 			puts("Unknown command.\n");
@@ -108,7 +120,6 @@ int main()
 	{
 	}
 
-	jump_to_app();
 	return 0;
 }
 
@@ -126,4 +137,16 @@ int wait()
 	{
 	}
 	return 0;
+}
+
+__naked__ int read_thr()
+{
+	__asm__("rthr a0");
+	__asm__("jalr zero, ra, 0");
+}
+
+__naked__ int read_tlr()
+{
+	__asm__("rtlr a0");
+	__asm__("jalr zero, ra, 0");
 }

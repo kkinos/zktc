@@ -225,6 +225,8 @@ module core (
   logic [15:0] cr_wdata;
   logic pc_wen;
   logic rfi;
+  logic tr_wen;
+  logic tr_ren;
 
 
   c_registers c_registers (
@@ -243,7 +245,10 @@ module core (
       .wdata(cr_wdata),
 
       .pc_wen (pc_wen),
-      .next_pc(next_pc)
+      .next_pc(next_pc),
+
+      .tr_wen(tr_wen),
+      .tr_ren(tr_ren)
   );
 
   // execute
@@ -380,9 +385,7 @@ module core (
           `INST_WSP
           || d_inst_wb_in == `INST_WPSR || d_inst_wb_in == `INST_WTLR || d_inst_wb_in ==
           `INST_WTHR
-          || d_inst_wb_in == `INST_WPPC || d_inst_wb_in == `INST_WPPSR || d_inst_wb_in ==
-          `INST_RTR
-          || d_inst_wb_in == `INST_WTR) begin
+          || d_inst_wb_in == `INST_WPPC || d_inst_wb_in == `INST_WPPSR) begin
         cr_wen = 1;
       end else begin
         cr_wen = 0;
@@ -403,6 +406,31 @@ module core (
       rfi = 0;
     end
   end
+
+  always_comb begin
+    if (writeback_enable) begin
+      if (d_inst_wb_in == `INST_WTR) begin
+        tr_wen = 1;
+      end else begin
+        tr_wen = 0;
+      end
+    end else begin
+      tr_wen = 0;
+    end
+  end
+
+  always_comb begin
+    if (writeback_enable) begin
+      if (d_inst_wb_in == `INST_RTR) begin
+        tr_ren = 1;
+      end else begin
+        tr_ren = 0;
+      end
+    end else begin
+      tr_ren = 0;
+    end
+  end
+
 
   // pipeline
   always_ff @(posedge clk) begin

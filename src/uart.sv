@@ -60,10 +60,10 @@ module uart #(
 
   always_comb begin
     case (uart_addr)
-      8'h00:   uart_rdata = tx_status_reg;
-      8'h10:   uart_rdata = rx_status_reg;
-      8'h14:   uart_rdata = rx_valid_reg;
-      8'h16:   uart_rdata = rx_data;
+      8'h00:   uart_rdata = {8'b0, tx_status_reg};
+      8'h10:   uart_rdata = {8'b0, rx_status_reg};
+      8'h14:   uart_rdata = {8'b0, rx_valid_reg};
+      8'h16:   uart_rdata = {8'b0, rx_data};
       default: uart_rdata = 16'h0;
     endcase
   end

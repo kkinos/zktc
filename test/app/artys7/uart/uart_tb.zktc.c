@@ -1,6 +1,5 @@
 #define USER_STACK_SIZE 256
 #define LED_ADDR 0x8000
-#define UART_BASE_ADDR 0x8100
 
 char stack1[USER_STACK_SIZE];
 

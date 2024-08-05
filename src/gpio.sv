@@ -76,7 +76,7 @@ module gpio (
 
   always_comb begin
     case (gpio_addr)
-      8'h02:   gpio_rdata = {8'b0, gpio_out_reg};
+      8'h02:   gpio_rdata = {8'b0, gpio_in_reg};
       default: gpio_rdata = 16'h0;
     endcase
   end

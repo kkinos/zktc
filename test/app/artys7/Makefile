@@ -1,4 +1,4 @@
-TESTDIRS:=led uart
+TESTDIRS:=led uart gpio
 
 .PHONY: all
 all: $(TESTDIRS)

@@ -21,7 +21,7 @@ int gpio_init()
 	return 0;
 }
 
-int set_gpio_out(int value, int port)
+int set_gpio_out(int port, int value)
 {
 	value = value & 0x1;
 
@@ -48,7 +48,7 @@ int get_gpio_in(int port)
 	return value;
 }
 
-int set_gpio_dir(int value, int port)
+int set_gpio_dir(int port, int value)
 {
 	value = value & 0x1;
 

@@ -16,8 +16,8 @@ int usermain()
 int task1()
 {
 
-  set_gpio_dir(1, 0);
   set_gpio_dir(0, 1);
+  set_gpio_dir(1, 0);
 
   while (1)
   {

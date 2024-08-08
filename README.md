@@ -10,9 +10,9 @@ ZKTC project is a hobby project that involves designing a CPU, creating a compil
 
 16-bit CPU implemented in SystemVerilog.
 
-[Document (Japanese)](docs/zktc_document_ja.md)
+[Description (Japanese)](docs/zktc_description_ja.md)
 
-[Document (English)]()
+[Description (English)]()
 
 # ZKTC-C-com (Compiler)
 
@@ -38,9 +38,9 @@ Small bootloader for ZKTC that can copy applications transferred by XMODEM to RA
 
 Small kernel for ZKTC with support for multitasking, semaphores and memory management.
 
-[Document (Japanese)](docs/z_kernel_document_ja.md)
+[Description (Japanese)](docs/z_kernel_description_ja.md)
 
-[Document (English)]()
+[Description (English)]()
 
 # Other Toolchain
 

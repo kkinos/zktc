@@ -29,7 +29,7 @@ module core (
     EXECUTE,
     MEMORY,
     WRITEBACK,
-    TRAP
+    EXCEPTION
   } cpu_state_t;
   cpu_state_t cpu_state;
 
@@ -39,6 +39,7 @@ module core (
   logic memory_enable;
   logic writeback_enable;
   logic trap_enable;
+  logic ill_inst_enable;
 
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -50,6 +51,7 @@ module core (
       memory_enable <= 0;
       writeback_enable <= 0;
       trap_enable <= 0;
+      ill_inst_enable <= 0;
 
       mem_valid <= 0;
       mem_wstrb <= 0;
@@ -70,9 +72,12 @@ module core (
         end
         DECODE: begin
           decode_enable <= 0;
-          if (!psr[0] && trap_de_out) begin
+          if (!psr[0] && ill_inst_de_out) begin
+            ill_inst_enable <= 1;
+            cpu_state <= EXCEPTION;
+          end else if (!psr[0] && trap_de_out) begin
             trap_enable <= 1;
-            cpu_state   <= TRAP;
+            cpu_state   <= EXCEPTION;
           end else begin
             execute_enable <= 1;
             cpu_state <= EXECUTE;
@@ -135,8 +140,9 @@ module core (
           writeback_enable <= 0;
           fetch_enable <= 1;
         end
-        TRAP: begin
+        EXCEPTION: begin
           trap_enable <= 0;
+          ill_inst_enable <= 0;
           fetch_enable <= 1;
           cpu_state <= FETCH;
         end
@@ -230,10 +236,11 @@ module core (
 
 
   c_registers c_registers (
-      .clk (clk),
-      .rst (rst),
+      .clk(clk),
+      .rst(rst),
       .trap(trap_enable),
-      .rfi (rfi),
+      .ill_inst(ill_inst_enable),
+      .rfi(rfi),
 
       .raddr  (cr_addr_de_out),
       .rdata  (cr_data),

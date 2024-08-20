@@ -1,10 +1,18 @@
-#define SOFT_INTERRUPT 0x0002
-#define HARD_INTERRUPT 0x0003
+#define ILL_INST_INTERRUPT 0x0002
+#define SOFT_INTERRUPT 0x0004
+#define HARD_INTERRUPT 0x0008
 
 int handle_interrupt(int psr, int *sp)
 
 {
-	if (psr & SOFT_INTERRUPT)
+	if (psr & ILL_INST_INTERRUPT)
+	{
+		puts("Illegal instruction\n");
+		while (1)
+		{
+		}
+	}
+	else if (psr & SOFT_INTERRUPT)
 	{
 
 		cur_task->sp = sp;

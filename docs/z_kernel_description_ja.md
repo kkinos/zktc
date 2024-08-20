@@ -31,8 +31,6 @@ kernel
 
 以下はマルチタスクを利用したアプリケーションの例です。
 
-`program/app/sample/led/led.zktc.c`
-
 ```c
 #define USER_STACK_SIZE 256
 

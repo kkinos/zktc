@@ -2,6 +2,7 @@ module c_registers (
     input logic clk,
     input logic rst,
     input logic trap,
+    input logic ill_inst,
     input logic rfi,
 
     input  logic [ 2:0] raddr,
@@ -24,7 +25,7 @@ module c_registers (
   logic [31:0] tr;
 
   localparam PC_INIT = 16'hB000;
-  localparam PC_TRAP = 16'h0000;
+  localparam PC_EXC = 16'h0000;
 
   assign rdata = (raddr == 3'b000 || raddr == 3'b111) ? 16'h0000 :
                  (raddr == 3'b001) ? sp :
@@ -41,8 +42,8 @@ module c_registers (
   always_ff @(posedge clk) begin
     if (rst) begin
       pc <= PC_INIT;
-    end else if (trap) begin
-      pc <= PC_TRAP;
+    end else if (ill_inst || trap) begin
+      pc <= PC_EXC;
     end else if (rfi) begin
       pc <= ppc;
     end else if (pc_wen) begin
@@ -64,9 +65,12 @@ module c_registers (
   always_ff @(posedge clk) begin
     if (rst) begin
       psr <= 16'h0000;
+    end else if (ill_inst) begin
+      psr[2:0]  <= 3'b011;
+      psr[15:3] <= 13'b0000000000000;
     end else if (trap) begin
-      psr[1:0]  <= 2'b11;
-      psr[15:2] <= 14'b00000000000000;
+      psr[2:0]  <= 3'b101;
+      psr[15:3] <= 13'b0000000000000;
     end else if (rfi) begin
       psr <= ppsr;
     end else if (wen && waddr == 3'b010) begin
@@ -111,7 +115,7 @@ module c_registers (
   always_ff @(posedge clk) begin
     if (rst) begin
       ppc <= 16'h0000;
-    end else if (trap) begin
+    end else if (ill_inst || trap) begin
       ppc <= pc + 2;
     end else if (wen && waddr == 3'b101) begin
       ppc <= wdata;
@@ -122,7 +126,7 @@ module c_registers (
   always_ff @(posedge clk) begin
     if (rst) begin
       ppsr <= 16'h0000;
-    end else if (trap) begin
+    end else if (ill_inst || trap) begin
       ppsr <= psr;
     end else if (wen && waddr == 3'b110) begin
       ppsr <= wdata;

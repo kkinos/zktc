@@ -100,15 +100,28 @@ int main()
 				puts("No program loaded.\n");
 			}
 		}
-		else if (!strcmp(cmd_buf, "timer"))
+		else if (!strcmp(cmd_buf, "ramdom"))
 		{
-			__asm__("rtr");
-			thr = read_thr();
-			tlr = read_tlr();
-			puts("Timer: 0x");
-			putxval(thr, 4);
-			putxval(tlr, 4);
-			puts("\n");
+			puts("range (max 7fff)\n");
+			puts("> ");
+			gets(cmd_buf);
+			int range = hex2int(cmd_buf);
+			if (0 < range)
+			{
+				__asm__("rtr");
+				thr = read_thr();
+				tlr = read_tlr();
+				tlr = tlr >> 4;
+				thr = (thr & 0x0007) << 12;
+
+				puts("Num: 0x");
+				putxval((thr | tlr) % range, 4);
+				puts("\n");
+			}
+			else
+			{
+				puts("Invalid range.\n");
+			}
 		}
 		else
 		{

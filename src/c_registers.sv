@@ -1,8 +1,9 @@
 module c_registers (
     input logic clk,
     input logic rst,
-    input logic trap,
     input logic ill_inst,
+    input logic trap,
+    input logic ir,
     input logic rfi,
 
     input  logic [ 2:0] raddr,
@@ -42,7 +43,7 @@ module c_registers (
   always_ff @(posedge clk) begin
     if (rst) begin
       pc <= PC_INIT;
-    end else if (ill_inst || trap) begin
+    end else if (ill_inst || trap || ir) begin
       pc <= PC_EXC;
     end else if (rfi) begin
       pc <= ppc;
@@ -61,16 +62,18 @@ module c_registers (
   end
 
   // PSR
-  // TODO: support for hardware interrupts
   always_ff @(posedge clk) begin
     if (rst) begin
       psr <= 16'h0000;
     end else if (ill_inst) begin
-      psr[2:0]  <= 3'b011;
-      psr[15:3] <= 13'b0000000000000;
+      psr[3:0]  <= 4'b0011;
+      psr[15:4] <= 12'b000000000000;
     end else if (trap) begin
-      psr[2:0]  <= 3'b101;
-      psr[15:3] <= 13'b0000000000000;
+      psr[3:0]  <= 4'b0101;
+      psr[15:4] <= 12'b000000000000;
+    end else if (ir) begin
+      psr[3:0]  <= 4'b1001;
+      psr[15:4] <= 12'b000000000000;
     end else if (rfi) begin
       psr <= ppsr;
     end else if (wen && waddr == 3'b010) begin
@@ -117,6 +120,8 @@ module c_registers (
       ppc <= 16'h0000;
     end else if (ill_inst || trap) begin
       ppc <= pc + 2;
+    end else if (ir) begin
+      ppc <= pc;
     end else if (wen && waddr == 3'b101) begin
       ppc <= wdata;
     end
@@ -126,7 +131,7 @@ module c_registers (
   always_ff @(posedge clk) begin
     if (rst) begin
       ppsr <= 16'h0000;
-    end else if (ill_inst || trap) begin
+    end else if (ill_inst || trap || ir) begin
       ppsr <= psr;
     end else if (wen && waddr == 3'b110) begin
       ppsr <= wdata;

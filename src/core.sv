@@ -4,7 +4,7 @@ module core (
     input logic clk,
     input logic rst,
 
-    input logic trap,
+    input logic irq,
 
     input logic mem_ready,
     input logic [15:0] mem_rdata,
@@ -13,7 +13,9 @@ module core (
     output logic mem_valid,
 
     output logic [ 1:0] mem_wstrb,
-    output logic [15:0] mem_wdata
+    output logic [15:0] mem_wdata,
+
+    output logic ack
 );
 
   logic [15:0] pc;
@@ -38,8 +40,9 @@ module core (
   logic execute_enable;
   logic memory_enable;
   logic writeback_enable;
-  logic trap_enable;
   logic ill_inst_enable;
+  logic trap_enable;
+  logic ir_enable;
 
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -50,8 +53,9 @@ module core (
       execute_enable <= 0;
       memory_enable <= 0;
       writeback_enable <= 0;
-      trap_enable <= 0;
       ill_inst_enable <= 0;
+      trap_enable <= 0;
+      ir_enable <= 0;
 
       mem_valid <= 0;
       mem_wstrb <= 0;
@@ -59,7 +63,11 @@ module core (
     end else begin
       case (cpu_state)
         FETCH: begin
-          if (!mem_ready) begin
+          if (!psr[0] && irq) begin
+            ir_enable <= 1;
+            cpu_state <= EXCEPTION;
+            ack <= 1;
+          end else if (!mem_ready) begin
             pc_de_in  <= pc;
             mem_valid <= 1;
           end else begin
@@ -141,8 +149,10 @@ module core (
           fetch_enable <= 1;
         end
         EXCEPTION: begin
-          trap_enable <= 0;
           ill_inst_enable <= 0;
+          trap_enable <= 0;
+          ir_enable <= 0;
+          ack <= 0;
           fetch_enable <= 1;
           cpu_state <= FETCH;
         end
@@ -238,8 +248,9 @@ module core (
   c_registers c_registers (
       .clk(clk),
       .rst(rst),
-      .trap(trap_enable),
       .ill_inst(ill_inst_enable),
+      .trap(trap_enable),
+      .ir(ir_enable),
       .rfi(rfi),
 
       .raddr  (cr_addr_de_out),

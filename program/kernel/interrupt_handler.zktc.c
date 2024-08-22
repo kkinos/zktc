@@ -3,7 +3,6 @@
 #define HARD_INTERRUPT 0x0008
 
 int handle_interrupt(int psr, int *sp)
-
 {
 	if (psr & ILL_INST_INTERRUPT)
 	{

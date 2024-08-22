@@ -27,6 +27,12 @@ int uart_init()
 	return 0;
 }
 
+int uart_interrupt_enable()
+{
+	*rx_interrupt_enable_reg = 1;
+	return 0;
+}
+
 int is_send_enable()
 {
 	if (*tx_status_reg == 1)

@@ -20,7 +20,6 @@ module zktc_artys7 (
   logic rst;
   assign rst = ~rstn;
 
-  logic trap;
 
   // Memory Interface
   logic mem_ready;
@@ -157,7 +156,7 @@ module zktc_artys7 (
       .clk(clk),
       .rst(rst),
 
-      .trap(trap),
+      .irq(uart_rx_irq),
 
       .mem_ready(mem_ready),
       .mem_rdata(mem_rdata),
@@ -166,7 +165,9 @@ module zktc_artys7 (
       .mem_valid(mem_valid),
 
       .mem_wstrb(mem_wstrb),
-      .mem_wdata(mem_wdata)
+      .mem_wdata(mem_wdata),
+
+      .ack(uart_rx_ack)
   );
 
   boot #(

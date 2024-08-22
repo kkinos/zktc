@@ -1,7 +1,7 @@
 module ill_inst_tb;
   logic clk;
   logic rst;
-  logic trap;
+  logic irq;
   logic [1:0] mem_wstrb;
   logic [15:0] mem_addr;
   logic [15:0] mem_rdata;
@@ -10,14 +10,14 @@ module ill_inst_tb;
   logic mem_valid;
 
   initial begin
-    trap = 0;
+    irq = 0;
   end
 
 
   core core (
       .clk(clk),
       .rst(rst),
-      .trap(trap),
+      .irq(irq),
       .mem_ready(mem_ready),
       .mem_rdata(mem_rdata),
       .mem_valid(mem_valid),

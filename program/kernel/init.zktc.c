@@ -18,9 +18,8 @@ __naked__ int init()
 	__asm__("or t0, t1");
 	__asm__("wsp t0");
 	__asm__("mov fp, t0");
-	__asm__("lil t0, handle_interrupt@l");
-	__asm__("lih t1, handle_interrupt@h");
+	__asm__("lil t0, interrupt_entry@l");
+	__asm__("lih t1, interrupt_entry@h");
 	__asm__("or t0, t1");
 	__asm__("jalr ra, t0, 0");
 }
-

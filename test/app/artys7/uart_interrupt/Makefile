@@ -11,19 +11,19 @@ BOOT:=$(wildcard $(BOOT_DIR)/*.zktc.c)
 KERNEL:=$(KERNEL_DIR)/queue.zktc.c $(KERNEL_DIR)/task.zktc.c $(KERNEL_DIR)/interrupt_handler.zktc.c $(KERNEL_DIR)/interrupt_entry.zktc.c $(KERNEL_DIR)/init.zktc.c \
 $(KERNEL_DIR)/dispatch.zktc.c $(KERNEL_DIR)/memory.zktc.c $(KERNEL_DIR)/semaphore.zktc.c $(KERNEL_DIR)/kernel.zktc.c
 
-APP:=gpio_tb.zktc.c
+APP:=uart_interrupt_tb.zktc.c
 
-TARGET:=gpio_tb.vcd
+TARGET:=uart_interrupt_tb.vcd
 
 .SILENT:
 
 .PHONY: all
 all: $(TARGET)
 
-gpio_tb.vcd: gpio_tb
+uart_interrupt_tb.vcd: uart_interrupt_tb
 	vvp $<
 
-gpio_tb: gpio_tb.sv $(TOP) $(SRCS) $(INCS) boot1.mem boot2.mem ram1.mem ram2.mem
+uart_interrupt_tb: uart_interrupt_tb.sv $(TOP) $(SRCS) $(INCS) boot1.mem boot2.mem ram1.mem ram2.mem
 	iverilog -g 2012 -o $@ -s $@ $< $(TOP) $(SRCS) -I $(SRC_DIR)  
 
 boot1.mem: $(COMMON) $(BOOT)
@@ -48,4 +48,4 @@ ram2.mem: $(COMMON) $(KERNEL) $(APP)
 
 .PHONY: clean
 clean:
-	rm -f *.vcd *.mem *.asm gpio_tb
+	rm -f *.vcd *.mem *.asm uart_interrupt_tb

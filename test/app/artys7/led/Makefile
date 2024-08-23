@@ -8,7 +8,7 @@ BOOT_DIR:=../../testboot
 KERNEL_DIR:=$(PROG_DIR)/kernel
 COMMON:=$(wildcard $(PROG_DIR)/common/*.zktc.c)
 BOOT:=$(wildcard $(BOOT_DIR)/*.zktc.c)
-KERNEL:=$(KERNEL_DIR)/queue.zktc.c $(KERNEL_DIR)/task.zktc.c $(KERNEL_DIR)/interrupt_handler.zktc.c $(KERNEL_DIR)/init.zktc.c \
+KERNEL:=$(KERNEL_DIR)/queue.zktc.c $(KERNEL_DIR)/task.zktc.c $(KERNEL_DIR)/interrupt_handler.zktc.c $(KERNEL_DIR)/interrupt_entry.zktc.c $(KERNEL_DIR)/init.zktc.c \
 $(KERNEL_DIR)/dispatch.zktc.c $(KERNEL_DIR)/memory.zktc.c $(KERNEL_DIR)/semaphore.zktc.c $(KERNEL_DIR)/kernel.zktc.c
 
 APP:=led_tb.zktc.c

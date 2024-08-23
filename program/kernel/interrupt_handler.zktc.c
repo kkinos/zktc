@@ -1,33 +1,49 @@
-#define ILL_INST_INTERRUPT 0x0002
-#define SOFT_INTERRUPT 0x0004
-#define HARD_INTERRUPT 0x0008
+#define MAX_HANDLER_NUM 5
 
-int handle_interrupt(int psr, int *sp)
+// Handler status
+#define NO_HANDLER 0
+#define READY 1
+
+// Handler
+typedef struct
 {
-	if (psr & ILL_INST_INTERRUPT)
-	{
-		puts("Illegal instruction\n");
-		while (1)
-		{
-		}
-	}
-	else if (psr & SOFT_INTERRUPT)
-	{
+	func *func;
+	int status;
 
-		cur_task->sp = sp;
+} handler;
 
-		schedule();
+handler handlers[MAX_HANDLER_NUM];
 
-		// a0 = cur_task->sp
-		dispatch_entry(cur_task->sp);
-	}
-	else if (psr & HARD_INTERRUPT)
+int switch_interrupt_handler(int interrupt_num)
+{
+	if (interrupt_num >= MAX_HANDLER_NUM)
 	{
-		// TODO
+		return 0;
 	}
-	else
+
+	handler *h = &handlers[interrupt_num];
+	if ((h->status == READY))
 	{
-		// start kernel
-		main();
+		*(h->func);
+		return 0;
 	}
+
+	return 0;
+}
+
+// Interrupt handler API
+
+int zk_set_interrupt_handler(func *func, int interrupt_num)
+{
+	if (interrupt_num >= MAX_HANDLER_NUM)
+	{
+		return -1;
+	}
+
+	handler *h = &handlers[interrupt_num];
+
+	h->func = func;
+	h->status = READY;
+
+	return 0;
 }

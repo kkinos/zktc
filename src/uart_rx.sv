@@ -37,6 +37,8 @@ module uart_rx #(
       start_edge <= 4'b1111;
       valid <= 0;
       irq <= 0;
+    end else if (ack) begin
+      irq <= 0;
     end else begin
       case (state)
         IDLE: begin
@@ -82,10 +84,5 @@ module uart_rx #(
     end
   end
 
-  always_ff @(posedge clk) begin
-    if (ack) begin
-      irq <= 0;
-    end
-  end
 
 endmodule

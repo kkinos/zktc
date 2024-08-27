@@ -25,7 +25,6 @@ int switch_interrupt_handler(int interrupt_num)
 	if ((h->status == READY))
 	{
 		*(h->func);
-		return 0;
 	}
 
 	return 0;

@@ -88,7 +88,7 @@ int zk_create_task(func *func, char *stack, int stack_size)
 	task->sp = task->sp - 8;
 	*(task->sp) = &zk_start();
 	task->sp = task->sp - 1;
-
+	*(task->sp) = 0x0000;
 	return i;
 }
 

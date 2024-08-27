@@ -63,11 +63,7 @@ module core (
     end else begin
       case (cpu_state)
         FETCH: begin
-          if (!psr[0] && irq) begin
-            ir_enable <= 1;
-            cpu_state <= EXCEPTION;
-            ack <= 1;
-          end else if (!mem_ready) begin
+          if (!mem_ready) begin
             pc_de_in  <= pc;
             mem_valid <= 1;
           end else begin
@@ -144,9 +140,16 @@ module core (
           end
         end
         WRITEBACK: begin
-          cpu_state <= FETCH;
-          writeback_enable <= 0;
-          fetch_enable <= 1;
+          if (!psr[0] && irq) begin
+            ir_enable <= 1;
+            cpu_state <= EXCEPTION;
+            ack <= 1;
+            writeback_enable <= 0;
+          end else begin
+            cpu_state <= FETCH;
+            writeback_enable <= 0;
+            fetch_enable <= 1;
+          end
         end
         EXCEPTION: begin
           ill_inst_enable <= 0;

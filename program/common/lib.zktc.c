@@ -170,5 +170,25 @@ int hex2int(char *s)
 	return n;
 }
 
-// int2string
-// string2int
+int rand(int range)
+{
+	__asm__("rtr");
+	int thr = read_thr();
+	int tlr = read_tlr();
+	tlr = tlr >> 4;
+	thr = (thr & 0x0007) << 12;
+
+	return (thr | tlr) % range;
+}
+
+__naked__ int read_thr()
+{
+	__asm__("rthr a0");
+	__asm__("jalr zero, ra, 0");
+}
+
+__naked__ int read_tlr()
+{
+	__asm__("rtlr a0");
+	__asm__("jalr zero, ra, 0");
+}

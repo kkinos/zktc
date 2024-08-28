@@ -1,4 +1,4 @@
-SAMPLEDIRS:=sample/led sample/gpio sample/mandelbrot
+SAMPLEDIRS:=sample/led sample/gpio sample/mandelbrot sample/hangman 
 
 .PHONY: all
 all: $(SAMPLEDIRS)

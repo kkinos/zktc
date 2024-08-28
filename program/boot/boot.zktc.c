@@ -100,7 +100,7 @@ int main()
 				puts("No program loaded.\n");
 			}
 		}
-		else if (!strcmp(cmd_buf, "ramdom"))
+		else if (!strcmp(cmd_buf, "random"))
 		{
 			puts("range (max 7fff)\n");
 			puts("> ");
@@ -108,14 +108,8 @@ int main()
 			int range = hex2int(cmd_buf);
 			if (0 < range)
 			{
-				__asm__("rtr");
-				thr = read_thr();
-				tlr = read_tlr();
-				tlr = tlr >> 4;
-				thr = (thr & 0x0007) << 12;
-
 				puts("Num: 0x");
-				putxval((thr | tlr) % range, 4);
+				putxval(rand(range), 4);
 				puts("\n");
 			}
 			else

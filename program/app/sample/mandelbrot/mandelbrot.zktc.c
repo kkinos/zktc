@@ -2,18 +2,18 @@
 
 char stack1[USER_STACK_SIZE];
 
-int task1_id;
+int mandelbrot_task_id;
 
 int usermain()
 {
 	uart_init();
 
-	task1_id = zk_create_task(&task1(), stack1, USER_STACK_SIZE);
+	mandelbrot_task_id = zk_create_task(&mandlbrot(), stack1, USER_STACK_SIZE);
 
 	return 0;
 }
 
-int task1()
+int mandlbrot()
 {
 	int res;
 

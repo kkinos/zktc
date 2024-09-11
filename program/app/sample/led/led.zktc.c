@@ -24,13 +24,13 @@ int task1()
 	int res = 0;
 	while (1)
 	{
-		*led = 5;
 		if (cnt < 30000)
 		{
 			cnt = cnt + 1;
 		}
 		else
 		{
+			*led = 5;
 			cnt = 0;
 			res = zk_switch();
 		}
@@ -44,13 +44,13 @@ int task2()
 	int res = 0;
 	while (1)
 	{
-		*led = 10;
 		if (cnt < 30000)
 		{
 			cnt = cnt + 1;
 		}
 		else
 		{
+			*led = 10;
 			cnt = 0;
 			res = zk_switch();
 		}

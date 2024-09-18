@@ -4,15 +4,33 @@
 
 ZKTC project is a hobby project that involves designing a CPU, creating a compiler for it, and running some programs on the CPU.
 
-# ZKTC (CPU)
+# Demos
 
-`./src`
+# Getting Started
 
-16-bit CPU implemented in SystemVerilog.
+## 1. Build CPU
 
-[Description (Japanese)](docs/zktc_description_ja.md)
+### Supported Boards
 
-[Description (English)]()
+## 2. Build App
+
+## 3. Load and Run
+
+## Test
+
+# Documentation
+
+## ZKTC(CPU)
+
+- [Japanese](docs/zktc_document_ja.md)
+
+- [English]()
+
+## Z-kernel(Kernel)
+
+- [Japanese](docs/z_kernel_document_ja.md)
+
+- [English]()
 
 # ZKTC-C-com (Compiler)
 
@@ -31,16 +49,6 @@ Some programs written in ZKTC-C that can be run on the ZKTC.
 `./program/boot`
 
 Small bootloader for ZKTC that can copy applications transferred by XMODEM to RAM.
-
-## Z-kernel (Kernel)
-
-`./program/kernel`
-
-Small kernel for ZKTC with support for multitasking, semaphores and memory management.
-
-[Description (Japanese)](docs/z_kernel_description_ja.md)
-
-[Description (English)]()
 
 # Other Toolchain
 

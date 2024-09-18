@@ -1,11 +1,12 @@
-Z-kernel はマルチタスクとセマフォとメモリ管理をサポートした ZKTC 用の小さなカーネルです。
+Z-kernel はマルチタスク、割り込みハンドラ、セマフォ、メモリ管理をサポートした ZKTC 用の小さなカーネルです。
 
 - [使用方法](#使用方法)
 - [機能](#機能)
-	- [マルチタスク](#マルチタスク)
-		- [タスク間通信](#タスク間通信)
-	- [セマフォ](#セマフォ)
-	- [メモリ管理](#メモリ管理)
+  - [マルチタスク](#マルチタスク)
+    - [タスク間通信](#タスク間通信)
+  - [割り込みハンドラ](#割り込みハンドラ)
+  - [セマフォ](#セマフォ)
+  - [メモリ管理](#メモリ管理)
 
 # 使用方法
 
@@ -15,12 +16,13 @@ Z-kernel はマルチタスクとセマフォとメモリ管理をサポート�
 kernel
     ├── dispatch.zktc.c
     ├── init.zktc.c
-    ├── interrupt_handler.zktc.c
+    ├── interrupt_entry.zktc.c
+    ├── interrupt_handler.zktc.c // Interrupt handler API
     ├── kernel.zktc.c
     ├── memory.zktc.c // Memory API
     ├── queue.zktc.c
     ├── semaphore.zktc.c // Semaphore API
-    └── task.zktc.c	// Task API, Message API
+    └── task.zktc.c // Task API, Message API
 ```
 
 # 機能
@@ -138,6 +140,68 @@ int task2()
 
 	zk_exit();
 
+	return 0;
+}
+```
+
+## 割り込みハンドラ
+
+割り込みに対して割り込みハンドラを登録することができます。現状ではハードウェア割り込み（UART 受信）に対してのみ対応していますが、カーネル側を修正することで他の割り込みに対しても対応することが可能です。
+
+以下は割り込みハンドラを使用したアプリケーションの例です。
+
+```c
+#define USER_STACK_SIZE 256
+
+char stack1[USER_STACK_SIZE];
+
+int task1_id;
+
+char c;
+
+int usermain()
+{
+
+	uart_init();
+	uart_interrupt_enable();
+
+	task1_id = zk_create_task(&hangman(), stack1, USER_STACK_SIZE);
+
+	// interrupt_num of UART receive interrupt is 0
+	zk_set_interrupt_handler(&uart_interrupt_handler(), 0);
+
+	return 0;
+}
+
+// blink led
+int task1()
+{
+	int cnt = 0;
+	int res;
+	while (1)
+	{
+		if (cnt < 5000)
+		{
+			*led = 5;
+			cnt = cnt + 1;
+		}
+		else if (cnt < 10000)
+		{
+			*led = 10;
+			cnt = cnt + 1;
+		}
+		else
+		{
+			cnt = 0;
+		}
+	}
+	return 0;
+}
+
+// echo back and set data to c
+int uart_interrupt_handler()
+{
+	c = getc();
 	return 0;
 }
 ```

@@ -8,12 +8,12 @@ int usermain()
 {
 	uart_init();
 
-	mandelbrot_task_id = zk_create_task(&mandlbrot(), stack1, USER_STACK_SIZE);
+	mandelbrot_task_id = zk_create_task(&mandelbrot(), stack1, USER_STACK_SIZE);
 
 	return 0;
 }
 
-int mandlbrot()
+int mandelbrot()
 {
 	int res;
 

@@ -8,13 +8,17 @@ The ZKTC (CPU) is a 16-bit CPU implemented in SystemVerilog and can run on an FP
 
 The `program/app/sample` folder contains several applications that can be executed.
 
+Turn on the LED using GPIO
+
+![](docs/img/demo1.jpeg)
+
 Hangman Game
 
-![](docs/img/demo1.png)
+![](docs/img/demo2.png)
 
 Mandelbrot Set Plot
 
-![](docs/img/demo2.png)
+![](docs/img/demo3.png)
 
 # Getting Started
 

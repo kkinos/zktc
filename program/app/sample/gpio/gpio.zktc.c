@@ -24,11 +24,11 @@ int task1()
 	{
 		if (get_gpio_in(6) == 1)
 		{
-			res = set_gpio_out(7, 1);
+			res = set_gpio_out(7, 0);
 		}
 		else
 		{
-			res = set_gpio_out(7, 0);
+			res = set_gpio_out(7, 1);
 		}
 	}
 }

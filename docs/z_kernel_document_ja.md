@@ -165,7 +165,7 @@ int usermain()
 	uart_init();
 	uart_interrupt_enable();
 
-	task1_id = zk_create_task(&hangman(), stack1, USER_STACK_SIZE);
+	task1_id = zk_create_task(&task1(), stack1, USER_STACK_SIZE);
 
 	// interrupt_num of UART receive interrupt is 0
 	zk_set_interrupt_handler(&uart_interrupt_handler(), 0);

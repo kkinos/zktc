@@ -6,7 +6,7 @@ The ZKTC (CPU) is a 16-bit CPU implemented in SystemVerilog and can run on an FP
 
 # Demos
 
-The `program/app/sample` folder contains several applications that can be executed.
+The `program/app/sample` folder contains several applications that can be executed using the Z-kernel (`program/kernel`).
 
 Turn on the LED using GPIO
 
@@ -38,7 +38,7 @@ Using the `make` command in the `program/` folder will generate `.bin` files in 
 
 When you start ZKTC, you can enter commands via UART. When you enter the `load` command, it will wait for a transfer, so please transfer the application binary using XMODEM via UART. Once `Loaded successfully.` is displayed, you can start the application with the `run` command.
 
-`ZKTC UART terminal`
+`serial terminal`
 
 ```
 ZKTC boot loader started.
@@ -55,20 +55,11 @@ Tests can be run by using the `make` command in each folder under `test/`. Icaru
 
 # Documentation
 
-## ZKTC(CPU)
+- [ZKTC(CPU)](docs/zktc_document_en.md)
 
-- [Japanese](docs/zktc_document_ja.md)
-
-- [English]()
-
-## Z-kernel(Kernel)
-
-- [Japanese](docs/z_kernel_document_ja.md)
-
-- [English]()
+- [Z-kernel(Kernel)](docs/z_kernel_document_en.md)
 
 # Tools
 
 - [zktc-c-com](https://github.com/kkinos/zktc-c-com) : ZKTC-C compiler
 - [zktc-asm](https://github.com/kkinos/zktc-asm) : ZKTC assembler
-- [zktc-emu](https://github.com/kkinos/zktc-emu) : ZKTC emulator
